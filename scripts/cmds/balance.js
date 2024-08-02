@@ -2,11 +2,15 @@ module.exports = {
 	config: {
 		name: "balance",
 		aliases: ["bal"],
-		version: "1.2",
+		version: "1.1",
 		author: "NTKhang",
 		countDown: 5,
 		role: 0,
-		description: {
+		shortDescription: {
+			vi: "xem số tiền của bạn",
+			en: "view your money"
+		},
+		longDescription: {
 			vi: "xem số tiền hiện có của bạn hoặc người được tag",
 			en: "view your money or the money of the tagged person"
 		},
@@ -25,7 +29,7 @@ module.exports = {
 			moneyOf: "%1 đang có %2$"
 		},
 		en: {
-			money: " 📜|𝙔𝙊𝙐 𝙃𝘼𝙑𝙀 {%1$}💲\n____________________________\n 🏦𝙔𝙊𝙐𝙍 𝘼𝘾𝘾𝙊𝙐𝙉𝙏 🏦 ",
+			money: "wow You have  %1$ 😅Sapa dey oo♋🦹 Don't spend this money, or Kelvin will beat you 🐍",
 			moneyOf: "%1 has %2$"
 		}
 	},
