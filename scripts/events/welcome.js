@@ -16,7 +16,7 @@ module.exports = {
 			session2: "trưa",
 			session3: "chiều",
 			session4: "tối",
-			welcomeMessage: "Cảm ơn bạn đã mời tôi vào nhóm!\nPrefix bot: %1\nĐể xem danh sách lệnh hãy nhập: %1help",
+			welcomeMessage: "Cảm ơn bạn đã mời tôi vào nhóm!\nPrefix bot: %1\nĐể xem danh sách lệnh hãy nhập: .1help",
 			multiple1: "bạn",
 			multiple2: "các bạn",
 			defaultWelcomeMessage: "Xin chào {userName}.\nChào mừng bạn đến với {boxName}.\nChúc bạn có buổi {session} vui vẻ!"
@@ -26,10 +26,10 @@ module.exports = {
 			session2: "noon",
 			session3: "afternoon",
 			session4: "evening",
-			welcomeMessage: "ØđɨȺmᵾs Łønøn💝\nThanks for inviting me to the group!\nBot prefix: %1\nTo see the list of commands, type: %1help",
+			welcomeMessage: "\nThanks for inviting me to the group!\nBot prefix: %1\nTo see the list of commands, type: .1help",
 			multiple1: "☃️",
 			multiple2: "🌨️",
-			defaultWelcomeMessage: `Hello {userName}.\nWelcome to {boxName}.\nHave a nice {session}!" Owner: call me ØđɨȺmᵾs Łønøn💝  `
+			defaultWelcomeMessage: `Hello {userName}.\nWelcome to {boxName}.\nHave a nice {session}!"`
 		}
 	},
 
