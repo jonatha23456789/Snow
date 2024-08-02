@@ -5,7 +5,7 @@ const path = require('path');
 module.exports = {
   config: {
     name: "owner",
-    aliases: ["info","ØđɨȺmᵾs Łønøn💝"],
+    aliases: ["info"],
     author: " pharouk ", 
     version: "2.0",
     cooldowns: 5,
@@ -27,27 +27,27 @@ module.exports = {
         await api.sendMessage(loadingMessage, event.threadID);
 
         const ownerInfo = {
-          name: 'ØđɨȺmᵾs oumar El Łønøn💝',
-          gender: 'Boy',
-          hobby: 'Play 🏀Basketball🏀 with my best friends🇺🇸 ',
-          relationship: 'Married with my baby bot i love this bot ☃️',
-          facebookLink: 'https://www.facebook.com/profile.php?id=100080855610572 ',
-          bio: 'Play Basketball is my dream 🔖'
+          name: '࿇𝗞𝗘𝗟𝗩𝗜𝗡 𝗛𝗜𝗞𝗔𝗥𝗨࿇',
+          gender: '𝗕𝗢𝗬',
+          hobby: '𝗔 𝗙𝗥𝗘𝗘𝗦𝗧𝗬𝗘 𝗠𝗢𝗢𝗗 𝗖𝗥𝗘𝗔𝗧𝗢𝗥',
+          relationship: '𝗡𝗢𝗡',
+          facebookLink: 'https://www.facebook.com/profile.php?id=61554245590654',
+          bio: '𝗟𝗢𝗩𝗘𝗟𝗬 𝗖𝗥𝗘𝗧𝗢𝗥'
         };
 
         const videoUrl = 
-["https://i.imgur.com/ZpgBKGA.mp4",
-"https://i.imgur.com/h6J9tkb.mp4",
-"https://i.imgur.com/RmMI3dC.mp4",
-"https://i.imgur.com/jeyjWuk.mp4",
-"https://i.imgur.com/HIWaV6d.mp4",
-"https://i.imgur.com/BXmgByZ.mp4",
-"https://i.imgur.com/wuo18rR.mp4",
-"https://i.imgur.com/C4neV9i.mp4",
-"https://i.imgur.com/pdr6e4T.mp4",
-"https://i.imgur.com/OAmV2Wr.mp4",
-"https://i.imgur.com/gPl8sV2.mp4",
-"https://i.imgur.com/nU8Gsyn.mp4",];
+["",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",
+"",];
         const tmpFolderPath = path.join(__dirname, 'tmp');
 
         if (!fs.existsSync(tmpFolderPath)) {
