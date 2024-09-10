@@ -1,65 +1,130 @@
 const axios = require('axios');
 
-async function fetchFromAI(url, params) {
-  try {
-    const response = await axios.get(url, { params });
-    return response.data;
-  } catch (error) {
-    console.error(error);
-    return null;
-  }
-}
+const services = [
+  { url: 'https://gpt-four.vercel.app/gpt', param: { prompt: 'prompt' }, isCustom: true }
+];
 
-async function getAIResponse(input, userId, messageID) {
-  const services = [
-     { url: 'https://metoushela-rest-api-tp5g.onrender.com/api/gpt4o?', params: { context: input } }
-  ];
-
-  let response = "Hey salut 👋🏾👸! Belle journée, pas vrai ? Pose ta question 💭, je serai ravie de t'aider.💜";
-  let currentIndex = 0;
-
-  for (let i = 0; i < services.length; i++) {
-    const service = services[currentIndex];
-    const data = await fetchFromAI(service.url, service.params);
-    if (data && (data.gpt4 || data.reply || data.response)) {
-      response = data.gpt4 || data.reply || data.response;
-      break;
+async function callService(service, prompt, senderID) {
+  if (service.isCustom) {
+    try {
+      const response = await axios.get(`${service.url}?${service.param.prompt}=${encodeURIComponent(prompt)}`);
+      return response.data.answer || response.data;
+    } catch (error) {
+      console.error(`Custom service error from ${service.url}: ${error.message}`);
+      throw new Error(`Error from ${service.url}: ${error.message}`);
     }
-    currentIndex = (currentIndex + 1) % services.length; // Move to the next service in the cycle
+  } else {
+    const params = {};
+    for (const [key, value] of Object.entries(service.param)) {
+      params[key] = key === 'uid' ? senderID : encodeURIComponent(prompt);
+    }
+    const queryString = new URLSearchParams(params).toString();
+    try {
+      const response = await axios.get(`${service.url}?${queryString}`);
+      return response.data.answer || response.data;
+    } catch (error) {
+      console.error(`Service error from ${service.url}: ${error.message}`);
+      throw new Error(`Error from ${service.url}: ${error.message}`);
+    }
   }
-
-  return { response, messageID };
 }
+
+async function getFastestValidAnswer(prompt, senderID) {
+  const promises = services.map(service => callService(service, prompt, senderID));
+  const results = await Promise.allSettled(promises);
+  for (const result of results) {
+    if (result.status === 'fulfilled' && result.value) {
+      return result.value;
+    }
+  }
+  throw new Error('All services failed to provide a valid answer');
+}
+
+const ArYAN = ['ai', '-ai'];
 
 module.exports = {
   config: {
     name: 'ai',
-    author: 'Metoushela',
+    version: '1.0.1',
+    author: 'ArYAN',
     role: 0,
     category: 'ai',
-    shortDescription: 'ai to ask anything',
+    longDescription: {
+      en: 'This is a large Ai language model trained by OpenAi, it is designed to assist with a wide range of tasks.',
+    },
+    guide: {
+      en: '\nAi < questions >\n\n🔎 𝗚𝘂𝗶𝗱𝗲\nAi what is capital of France?',
+    },
   },
-  onStart: async function ({ api, event, args }) {
-    const input = args.join(' ').trim();
-    if (!input) {
-      api.sendMessage(`📑 𝙿𝚕𝚎𝚊𝚜𝚎 𝚙𝚛𝚘𝚟𝚒𝚍𝚎 a 𝚚𝚞𝚎𝚜𝚝𝚒𝚘𝚗 𝚘𝚛 𝚜𝚝𝚊𝚝𝚎𝚖𝚎𝚗𝚝. `, event.threadID, event.messageID);
-      return;
+
+  langs: {
+    en: {
+      final: "",
+      header: "👸✨ |👑 𝗟𝗢𝗩𝗘𝗟𝗬 𝗔𝗜\n━━━━━━━━━━━━━━━━",
+      footer: "━━━━━━━━━━━━━━━",
     }
-
-    const { response, messageID } = await getAIResponse(input, event.senderID, event.messageID);
-    api.sendMessage(` 🎀...............................\n¥n${response}\n\n🎀...............................`, event.threadID, messageID);
   },
-  onChat: async function ({ event, message }) {
-    const messageContent = event.body.trim().toLowerCase();
-    if (messageContent.startsWith("ai")) {
-      const input = messageContent.replace(/^ai\s*/, "").trim();
-      const { response, messageID } = await getAIResponse(input, event.senderID, message.messageID);
-      message.reply(`
-        
-👑𝗟𝗢𝗩𝗘𝗟𝗬 𝗔𝗜  | 👸
-━━━━━━━━━━━━━━━\n${response}\n━━━━━━━━━━━━━━━\n 🌸👑𝗟𝗢𝗩𝗘𝗟𝗬 𝗔𝗜 👑🌸\n━━━━━━━━━━━━━━━
 
-`, messageID);
+  onStart: async function () {
+    // Empty onStart function
+  },
+
+  onChat: async function ({ api, event, args, getLang, message }) {
+    try {
+      const prefix = ArYAN.find(p => event.body && event.body.toLowerCase().startsWith(p));
+      let prompt;
+
+      // Check if the user is replying to a bot message
+      if (event.type === 'message_reply') {
+        const replyMessage = event.messageReply; // Adjusted to use the replyMessage directly
+
+        // Check if the bot's original message starts with the header
+        if (replyMessage.body && replyMessage.body.startsWith(getLang("header"))) {
+          // Extract the user's reply from the event
+          prompt = event.body.trim();
+
+          // Combine the user's reply with the bot's original message
+          prompt = `${replyMessage.body}\n\nUser reply: ${prompt}`;
+        } else {
+          // If the bot's original message doesn't start with the header, return
+          return;
+        }
+      } else if (prefix) {
+        prompt = event.body.substring(prefix.length).trim() || 'hello';
+      } else {
+        return;
+      }
+
+      if (prompt === 'hello') {
+        const greetingMessage = `${getLang("header")}\nHello! How can I assist you today?\n${getLang("footer")}`;
+        api.sendMessage(greetingMessage, event.threadID, event.messageID);
+        console.log('Sent greeting message as a reply to user');
+        return;
+      }
+
+      try {
+        const fastestAnswer = await getFastestValidAnswer(prompt, event.senderID);
+
+        const finalMsg = `${getLang("header")}\n${fastestAnswer}\n${getLang("footer")}`;
+        api.sendMessage(finalMsg, event.threadID, event.messageID);
+
+        console.log('Sent answer as a reply to user');
+      } catch (error) {
+        console.error(`Failed to get answer: ${error.message}`);
+        api.sendMessage(
+          `${error.message}.`,
+          event.threadID,
+          event.messageID
+        );
+      }
+    } catch (error) {
+      console.error(`Failed to process chat: ${error.message}`);
+      api.sendMessage(
+        `${error.message}.`,
+        event.threadID,
+        event.messageID
+      );
+
     }
   }
 };
